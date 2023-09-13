@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,33 +9,53 @@ namespace HelloDungeon
 {
     class Game
     {
-        struct Monster
+        struct Character
         {
             public string Name;
             public float Health;
             public float Damage;
             public float Defence;
             public float Stamina;
+            public Weapon CurrentWeapon;
         }
 
-        void PrintStats(Monster monster)
+        struct Weapon
         {
-            Console.WriteLine("Monster Name: " + monster.Name);
-            Console.WriteLine("Monster Health: " + monster.Health);
-            Console.WriteLine("Monster Damage: " + monster.Damage);
-            Console.WriteLine("Monster Defence: " + monster.Defence);
-            Console.WriteLine("Monster Stamina: " + monster.Stamina);
+            public string Name;
+            public float Damage;
+        }
+
+        bool gameOver;
+        int CurrentScene = 0;
+
+        Weapon Alfred;
+        Character JoePable;
+        Character LucyJill;
+
+
+
+        void PrintStats(Character character)
+        {
+            Console.WriteLine("Name: " + character.Name);
+            Console.WriteLine("Health: " + character.Health);
+            Console.WriteLine("Damage: " + character.Damage);
+            Console.WriteLine("Defence: " + character.Defence);
+            Console.WriteLine("Stamina: " + character.Stamina);
 
         }
 
-        float Attack(Monster attacker, Monster defender)
+
+
+        float Attack(Character attacker, Character defender)
         {
             float totalDamage = attacker.Damage - defender.Defence;
 
             return defender.Health - totalDamage;
         }
 
-        float Heal(Monster attacker, Monster defender)
+
+
+        float Heal(Character attacker, Character defender)
         {
             float totalDamage = attacker.Damage - defender.Defence;
             float totalHeal = totalDamage;
@@ -42,69 +63,169 @@ namespace HelloDungeon
 
         }
 
-        void Fight(Monster monster1, Monster monster2)
+        void Fight(ref Character character2)
         {
-                Console.WriteLine(monster1.Name + " punches " + monster2.Name + "!");
-            monster2.Health = Attack(monster1, monster2);
-            Console.ReadKey (true);
+            
+
+            PrintStats(Player);
+            PrintStats(character2);
 
 
-            PrintStats(monster1);
-            PrintStats(monster2);
+            string battleChoice = GetInput("Choose an action", "Attack", "Run");
+
+            if(battleChoice =="1")
+            {
+                character2.Health = Attack(Player, character2);
+                Console.WriteLine("You used " + Player.CurrentWeapon.Name + " !");
+            }
+            else if (battleChoice == "2")
+            {
+                Console.WriteLine("You grit your teeth.");
+            }
+            else if (battleChoice =="3")
+            {
+                Console.WriteLine("You fled the battle field")
+            }
 
 
-            Console.WriteLine(monster2.Name + " punches " + monster1.Name + "!");
-            monster2.Health = Attack(monster2, monster1);
-            Console.ReadKey(true);
-
-
-            PrintStats(monster1);
-            PrintStats(monster2);
-
-            Console.WriteLine(monster1.Name + " Syphons the blood from " + monster2.Name + "!");
-            monster2.Health = Attack(monster1, monster2);
-            monster1.Health = Heal(monster1, monster2);
-            Console.ReadKey(true);
-
-            PrintStats(monster1);
-            PrintStats(monster2);
         }
 
-
-        public void Run()
+        public void Start()
         {
-            Monster JoePable;
+            Weapon Alfred;
+            Alfred.Name = "Alfred";
+            Alfred.Damage = 100f;
+
+            Character JoePable;
             JoePable.Name = "JoePable";
             JoePable.Health = 2119f;
             JoePable.Damage = 246.90f;
             JoePable.Defence = 0.9f;
-            JoePable.Stamina = 3;
+            JoePable.Stamina = 3f;
+            JoePable.CurrentWeapon = Alfred;
 
-            Monster JohnCena;
+
+            Character JohnCena;
             JohnCena.Name = "JOHN.......cena";
             JohnCena.Health = 2120;
             JohnCena.Damage = 246.91f;
             JoePable.Defence = 1f;
             JohnCena.Stamina = 4f;
 
-            Monster LucyJill;
+            Character LucyJill;
             LucyJill.Name = "Lucy Jill DirtBag Biden";
             LucyJill.Health = 2118;
             LucyJill.Damage = 246.89f;
             LucyJill.Defence = 0.8f;
             LucyJill.Stamina = 0f;
 
-            PrintStats(JoePable);
-            PrintStats(LucyJill);
+        }
 
-            Fight(JoePable, LucyJill);
+        int GetInput(string prompt, string option1,string option2, string option3)
+        {
+            string playerChoice = "";
+
+            Console.WriteLine(option1);
+            Console.WriteLine("1." + option1);
+            Console.WriteLine("1." + option2);
+            Console.WriteLine("1." + option3);
+            Console.Write(">");
+
+            playerChoice = Console.ReadLine();
+
+            return playerChoice;
+        }
+
+
+
+        void CharacterSelection()
+        {
+            string characterChoice = GetInput("Choose your character", JoePable.Name, JohnCena.Name, LucyJill.Name);
+
+            if (characterChoice == "1")
+            {
+                Player = JoePable;
+            }
+            else if (characterChoice == "2")
+            {
+                Player = JohnCena;
+            }
+            else if (characterChoice == "3")
+            {
+                Player = LucyJill;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
+                Console.Clear;
+                return;
+            }
+        }
+
+
+        void BattleScene()
+        {
+            Fight(ref JoePable, ref LucyJill);
 
             Console.Clear();
 
-            Fight(JoePable, LucyJill);
+            if(JoePable.Health <= 0 || LucyJill.Health <=0)
+            {
+                CurrentScene = 1;
+            }
 
+        }
+
+        void WinResultScene()
+        {
+            if(JoePable.Health > 0 && LucyJill.Health >=0)
+            {
+                Console.WriteLine("The winner is: " + JoePable.Name);
+            }
+            else if(LucyJill.Health > 0 && JoePable.Health <= 0)
+            {
+                Console.WriteLine("The winner is: " + LucyJill.Name);
+            }
+            Console.ReadKey(true);
             Console.Clear();
+        }
 
+
+        void Update()
+        {
+            if (CurrentScene == 0)
+            {
+                CharacterSelection();
+            }
+            else if (CurrentScene == 1)
+            {
+                WinResultScene();
+            }
+        }                           
+
+        void End()
+        {
+            Console.WriteLine("Thanks For Playing");
+        }
+
+
+        public void Run()
+        {
+
+            Start();
+
+            CharacterSelection();
+
+
+
+            while (gameOver == false)
+            {
+                Update();
+            }
+
+            End();
         }
     }
 }
