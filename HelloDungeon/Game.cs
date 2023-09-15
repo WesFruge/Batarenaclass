@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace HelloDungeon
 {
@@ -31,6 +33,7 @@ namespace HelloDungeon
         Weapon Alfred;
         Character JoePable;
         Character LucyJill;
+        Character Player;
 
 
 
@@ -84,7 +87,7 @@ namespace HelloDungeon
             }
             else if (battleChoice =="3")
             {
-                Console.WriteLine("You fled the battle field")
+                Console.WriteLine("You fled the battle field");
             }
 
 
@@ -136,6 +139,14 @@ namespace HelloDungeon
             return playerChoice;
         }
 
+        void AddInt()
+        {
+            int[] numbers = new int[3] { 1, 2, 3 };
+            for(int i = 0)
+            {
+                float total = int[1], int[2], int[3]
+            }
+        }
 
 
         void CharacterSelection()
