@@ -33,9 +33,10 @@ namespace HelloDungeon
         Weapon Alfred;
         Character JoePable;
         Character LucyJill;
+        Character JohnCena;
         Character Player;
-
-
+        Character[] Enemies;
+        int currentEnemyIndex = 0;
 
         void PrintStats(Character character)
         {
@@ -68,15 +69,15 @@ namespace HelloDungeon
 
         void Fight(ref Character character2)
         {
-            
+
 
             PrintStats(Player);
             PrintStats(character2);
 
 
-            string battleChoice = GetInput("Choose an action", "Attack", "Run");
+            string battleChoice = GetInput("Choose an action", "Attack","Defend", "Run");
 
-            if(battleChoice =="1")
+            if (battleChoice == "1")
             {
                 character2.Health = Attack(Player, character2);
                 Console.WriteLine("You used " + Player.CurrentWeapon.Name + " !");
@@ -85,7 +86,7 @@ namespace HelloDungeon
             {
                 Console.WriteLine("You grit your teeth.");
             }
-            else if (battleChoice =="3")
+            else if (battleChoice == "3")
             {
                 Console.WriteLine("You fled the battle field");
             }
@@ -95,11 +96,11 @@ namespace HelloDungeon
 
         public void Start()
         {
-            Weapon Alfred;
+
             Alfred.Name = "Alfred";
             Alfred.Damage = 100f;
 
-            Character JoePable;
+
             JoePable.Name = "JoePable";
             JoePable.Health = 2119f;
             JoePable.Damage = 246.90f;
@@ -108,23 +109,26 @@ namespace HelloDungeon
             JoePable.CurrentWeapon = Alfred;
 
 
-            Character JohnCena;
+
             JohnCena.Name = "JOHN.......cena";
             JohnCena.Health = 2120;
             JohnCena.Damage = 246.91f;
             JoePable.Defence = 1f;
             JohnCena.Stamina = 4f;
 
-            Character LucyJill;
+
             LucyJill.Name = "Lucy Jill DirtBag Biden";
             LucyJill.Health = 2118;
             LucyJill.Damage = 246.89f;
             LucyJill.Defence = 0.8f;
             LucyJill.Stamina = 0f;
 
+            Enemies = new Character[3] { JoePable, JohnCena, LucyJill };
+            
+
         }
 
-        int GetInput(string prompt, string option1,string option2, string option3)
+        string GetInput(string prompt, string option1, string option2, string option3)
         {
             string playerChoice = "";
 
@@ -139,15 +143,33 @@ namespace HelloDungeon
             return playerChoice;
         }
 
-        void AddInt()
+        void PrintSum(int[] numbers)
         {
-            int[] numbers = new int[3] { 1, 2, 3 };
-            for(int i = 0)
+            int sum = 0;
+            for (int i = 0; i < numbers.Length; i++)
             {
-                float total = int[1], int[2], int[3]
+                sum += numbers[i];
             }
+            Console.WriteLine(sum);
         }
 
+
+        void PrintLargest(int[] numbers)
+        {
+            int currentNumber = 0;
+            int biggestNumber = 0;
+
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                currentNumber = numbers[i];
+
+                if (currentNumber > biggestNumber)
+                {
+                    biggestNumber = currentNumber;
+                }
+            }
+            Console.WriteLine(biggestNumber);
+        }
 
         void CharacterSelection()
         {
@@ -170,7 +192,7 @@ namespace HelloDungeon
                 Console.WriteLine("Invalid input");
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey(true);
-                Console.Clear;
+                Console.Clear();
                 return;
             }
         }
@@ -178,26 +200,43 @@ namespace HelloDungeon
 
         void BattleScene()
         {
-            Fight(ref JoePable, ref LucyJill);
+            Fight( ref Enemies[currentEnemyIndex]);
 
             Console.Clear();
 
-            if(JoePable.Health <= 0 || LucyJill.Health <=0)
+            if (JoePable.Health <= 0 || LucyJill.Health <= 0)
             {
                 CurrentScene = 1;
             }
 
         }
 
-        void WinResultScene()
+        void EndGameScene()
         {
-            if(JoePable.Health > 0 && LucyJill.Health >=0)
+            string playerChoice = GetInput("You Died. Play Again?", "Yes", "No", "");
+
+            if(playerChoice == "1")
+            {
+                CurrentScene = 0;
+            }
+            else if (playerChoice == "2")
+            {
+                gameOver = true;
+            }
+        }
+
+
+        void WinResultScene()
+        {Player.Health > 0 && Enemies[currentEnemyIndex].Health >= 0)
             {
                 Console.WriteLine("The winner is: " + JoePable.Name);
+                CurrentScene = 1;
+                currentEnemyIndex++;
             }
-            else if(LucyJill.Health > 0 && JoePable.Health <= 0)
+            else if (Enemies[currentEnemyIndex].Health > 0 && JoePable.Health <= 0)
             {
-                Console.WriteLine("The winner is: " + LucyJill.Name);
+                Console.WriteLine("The winner is: " + Enemies[currentEnemyIndex].Name);
+                CurrentScene = 3;
             }
             Console.ReadKey(true);
             Console.Clear();
@@ -212,9 +251,17 @@ namespace HelloDungeon
             }
             else if (CurrentScene == 1)
             {
+                BattleScene();
+            }
+            else if (CurrentScene == 2)
+            {
                 WinResultScene();
             }
-        }                           
+            else if (CurrentScene == 1)
+            {
+                EndGameScene();
+            }
+        }
 
         void End()
         {
@@ -224,7 +271,8 @@ namespace HelloDungeon
 
         public void Run()
         {
-
+            int[] numbers = new int[3] { 1, 2, 4 };
+            PrintLargest(numbers);
             Start();
 
             CharacterSelection();
